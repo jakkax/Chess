@@ -1,13 +1,22 @@
 class BoardView:
     def __init__(self):
+        self.boardWidth = 800
+        self.boardHeight = 800
+
         self.rows = 8
         self.columns = 8
 
-        self.oddColour = 'peach'
-        self.evenColour = 'salmon'
+        self.pixelsInSquare = self.boardWidth / self.rows
 
-    def renderBoard(self):
+    def renderBoard(self, canvas):
+        oddColour = 'peachpuff'
+        evenColour = 'darksalmon'
+
         for i in range(self.columns):
             for j in range(self.rows):
-                colour = self.oddColour if (i + j) % 2 == 1 else self.evenColour
-                print(colour)
+                colour = evenColour if (i + j) % 2 == 1 else oddColour
+                canvas.create_rectangle(j * self.pixelsInSquare,
+                                       i * self.pixelsInSquare,
+                                       (j + 1) * self.pixelsInSquare,
+                                       (i + 1) * self.pixelsInSquare,
+                                       fill = colour, width = 0)
