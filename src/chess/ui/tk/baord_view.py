@@ -1,3 +1,6 @@
+import os
+from PIL import Image, ImageTk
+
 class BoardView:
     def __init__(self):
         self.boardWidth = 800
@@ -20,3 +23,14 @@ class BoardView:
                                        (j + 1) * self.pixelsInSquare,
                                        (i + 1) * self.pixelsInSquare,
                                        fill = colour, width = 0)
+    
+    def renderPieces(self, canvas):
+        basePath = os.path.dirname(__file__)
+
+        realPath = os.path.join(basePath, 'assets', 'white-rook.png')
+        
+        resized = Image.open(realPath)
+        daRook = ImageTk.PhotoImage(resized)
+        
+        canvas.create_rectangle(0, 0, 200, 200, fill = 'red', width = 0)
+        canvas.create_image(100, 100, image = daRook)

@@ -19,6 +19,7 @@ class App:
     
     def setupGame(self):
         self.board.renderBoard(self.canvas)
+        self.board.renderPieces(self.canvas)
     
     def setupCanvas(self):
         self.canvas = tkinter.Canvas(width = self.board.boardWidth, height = self.board.boardHeight)
