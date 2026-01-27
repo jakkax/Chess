@@ -9,7 +9,8 @@ class BoardView:
         self.rows = 8
         self.columns = 8
 
-        self.pixelsInSquare = self.boardWidth / self.rows
+        self.pixelsInSquare = self.boardWidth // self.rows
+        self.pieceScale = 0.95 # compared to width of square
 
     def renderBoard(self, canvas):
         oddColour = 'peachpuff'
@@ -23,14 +24,40 @@ class BoardView:
                                        (j + 1) * self.pixelsInSquare,
                                        (i + 1) * self.pixelsInSquare,
                                        fill = colour, width = 0)
-    
-    def renderPieces(self, canvas):
-        basePath = os.path.dirname(__file__)
+    def loadPiece(self, piece):
+        path = os.path.join(os.path.dirname(__file__), 'assets', piece)
+        resized = Image.open(path).convert('RGBA').resize((int(self.pixelsInSquare * self.pieceScale), int(self.pixelsInSquare * self.pieceScale)))
+        return ImageTk.PhotoImage(resized)
 
-        realPath = os.path.join(basePath, 'assets', 'white-rook.png')
-        
-        resized = Image.open(realPath)
-        daRook = ImageTk.PhotoImage(resized)
-        
-        canvas.create_rectangle(0, 0, 200, 200, fill = 'red', width = 0)
-        canvas.create_image(100, 100, image = daRook)
+    def loadPieces(self):
+        self.whitePawn = self.loadPiece('white.pawn.png')
+        self.whiteRook = self.loadPiece('white.rook.png')
+        self.whiteKnight = self.loadPiece('white.knight.png')
+        self.whiteBishop = self.loadPiece('white.bishop.png')
+        self.whiteQueen = self.loadPiece('white.queen.png')
+        self.whiteKing = self.loadPiece('white.king.png')
+
+        self.blackPawn = self.loadPiece('black.pawn.png')
+        self.blackRook = self.loadPiece('black.rook.png')
+        self.blackKnight = self.loadPiece('black.knight.png')
+        self.blackBishop = self.loadPiece('black.bishop.png')
+        self.blackQueen = self.loadPiece('black.queen.png')
+        self.blackKing = self.loadPiece('black.king.png')
+
+    def renderPieces(self, canvas, gameState):
+        getPieceImage = {'Pawn': {'white': self.whitePawn, 'black': self.blackPawn},
+                         'Rook': {'white': self.whiteRook, 'black': self.blackRook},
+                         'Knight': {'white': self.whiteKnight, 'black': self.blackKnight},
+                         'Bishop': {'white': self.whiteBishop, 'black': self.blackBishop},
+                         'Queen': {'white': self.whiteQueen, 'black': self.blackQueen},
+                         'King': {'white': self.whiteKing, 'black': self.blackKing}}
+
+        for rowIndex, row in enumerate(gameState.board):
+            for columnIndex, piece in enumerate(row):
+                if piece is None:
+                    continue
+
+                pieceType = piece.__class__.__name__
+                image = getPieceImage[pieceType][piece.colour]
+
+                canvas.create_image((columnIndex + 0.5) * self.pixelsInSquare, (rowIndex + 0.5) * self.pixelsInSquare, image = image)
