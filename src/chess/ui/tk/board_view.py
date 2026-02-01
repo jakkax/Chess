@@ -6,11 +6,15 @@ class BoardView:
         self.boardWidth = 800
         self.boardHeight = 800
 
+        self.originX = 10
+        self.originY = 100
+
         self.rows = 8
         self.columns = 8
 
         self.pixelsInSquare = self.boardWidth // self.rows
-        self.pieceScale = 0.95 # compared to width of square
+
+        self.pieceScale = 1 # compared to width of square
 
     def renderBoard(self, canvas):
         oddColour = 'peachpuff'
@@ -19,14 +23,14 @@ class BoardView:
         for i in range(self.columns):
             for j in range(self.rows):
                 colour = evenColour if (i + j) % 2 == 1 else oddColour
-                canvas.create_rectangle(j * self.pixelsInSquare,
-                                       i * self.pixelsInSquare,
-                                       (j + 1) * self.pixelsInSquare,
-                                       (i + 1) * self.pixelsInSquare,
+                canvas.create_rectangle((j) * self.pixelsInSquare + self.originX,
+                                       (i) * self.pixelsInSquare + self.originY,
+                                       (j + 1) * self.pixelsInSquare + self.originX,
+                                       (i + 1) * self.pixelsInSquare + self.originY,
                                        fill = colour, width = 0)
     def loadPiece(self, piece):
         path = os.path.join(os.path.dirname(__file__), 'assets', piece)
-        resized = Image.open(path).convert('RGBA').resize((int(self.pixelsInSquare * self.pieceScale), int(self.pixelsInSquare * self.pieceScale)))
+        resized = Image.open(path).convert('RGBA').resize((int(self.pixelsInSquare * self.pieceScale), int(self.pixelsInSquare * self.pieceScale)), Image.LANCZOS)
         return ImageTk.PhotoImage(resized)
 
     def loadPieces(self):
@@ -60,4 +64,4 @@ class BoardView:
                 pieceType = piece.__class__.__name__
                 image = getPieceImage[pieceType][piece.colour]
 
-                canvas.create_image((columnIndex + 0.5) * self.pixelsInSquare, (rowIndex + 0.5) * self.pixelsInSquare, image = image)
+                canvas.create_image((columnIndex + 0.5) * self.pixelsInSquare + self.originX, (rowIndex + 0.5) * self.pixelsInSquare + self.originY, image = image)
