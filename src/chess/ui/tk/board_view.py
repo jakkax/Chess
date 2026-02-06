@@ -6,8 +6,8 @@ class BoardView:
         self.boardWidth = 800
         self.boardHeight = 800
 
-        self.originX = 10
-        self.originY = 100
+        self.originX = 0
+        self.originY = 0
 
         self.rows = 8
         self.columns = 8
@@ -49,12 +49,12 @@ class BoardView:
         self.blackKing = self.loadPiece('black.king.png')
 
     def renderPieces(self, canvas, gameState):
-        getPieceImage = {'Pawn': {'white': self.whitePawn, 'black': self.blackPawn},
-                         'Rook': {'white': self.whiteRook, 'black': self.blackRook},
-                         'Knight': {'white': self.whiteKnight, 'black': self.blackKnight},
-                         'Bishop': {'white': self.whiteBishop, 'black': self.blackBishop},
-                         'Queen': {'white': self.whiteQueen, 'black': self.blackQueen},
-                         'King': {'white': self.whiteKing, 'black': self.blackKing}}
+        getPieceImage = {'Pawn': {True: self.whitePawn, False: self.blackPawn},
+                         'Rook': {True: self.whiteRook, False: self.blackRook},
+                         'Knight': {True: self.whiteKnight, False: self.blackKnight},
+                         'Bishop': {True: self.whiteBishop, False: self.blackBishop},
+                         'Queen': {True: self.whiteQueen, False: self.blackQueen},
+                         'King': {True: self.whiteKing, False: self.blackKing}}
 
         for rowIndex, row in enumerate(gameState.board):
             for columnIndex, piece in enumerate(row):
