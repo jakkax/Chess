@@ -1,52 +1,38 @@
 class InputHandler:
-    # def leftClick(self, event, origin, squareSize):
-    #     x = event.x
-    #     y = event.y
+    def __init__(self):
+        self.startClickX = -1
+        self.startClickY = -1
+        self.isButtonPressed = False
 
-    #     row = (y - origin[1]) // squareSize
-    #     column = (x - origin[0]) // squareSize
+        self.dragging = False
+        self.draggingThreshold = 3 # mouse needs to move x pixels for the click to be considered a drag
 
-    #     return row, column
+class LeftClick(InputHandler):
+    def __init__(self):
+        super().__init__()
     
-    # def leftClickRelease(self, event, origin, squareSize):
-    #     pass
+    def handleClick(self, event):
+        self.isButtonPressed = True
+        self.startClickX = event.x
+        self.startClickY = event.y
 
-    # def rightClick(self, event, origin, squareSize):
-    #     x = event.x
-    #     y = event.y
+    def handleMotion(self, event):
+        if self.isButtonPressed and (abs(self.startLeftClickX - event.x) > self.draggingThreshold) or (abs(self.startLeftClickY - event.y) > self.draggingThreshold):
+            self.dragging = True
 
-    #     row = (y - origin[1]) // squareSize
-    #     column = (x - origin[0]) // squareSize
+    def handleRelease(self, event):
+        pass
 
-    #     return row, column
-
-    # def rightClickRelease(self, event, origin, squareSize):
-    #     pass
+class RightClick(InputHandler):
+    def __init__(self):
+        super().__init__()
     
-    def handleClick(self, event, origin, squareSize):
-        x = event.x
-        y = event.y
+    def handleClick(self, event):
+        self.startClickX = event.x
+        self.startClickY = event.y
 
-        row = (y - origin[1]) // squareSize
-        column = (x - origin[0]) // squareSize
+    def handleRelease(self, event):
+        pass
 
-        return row, column
-    
-        # if event.num == 1:
-        #     return self.leftClick(event, origin, squareSize)
-        # elif event.num == 3:
-        #     return self.rightClick(event, origin, squareSize)
-    
-    def handleButtonRelease(self, event, origin, squareSize):
-        x = event.x
-        y = event.y
-
-        row = (y - origin[1]) // squareSize
-        column = (x - origin[0]) // squareSize
-
-        return row, column
-    
-        # if event.num == 1:
-        #     self.leftClickRelease(event, origin, squareSize)
-        # elif event.num == 3:
-        #     self.rightClickRelease(event, origin, squareSize)
+#     row = (y - origin[1]) // squareSize
+#     column = (x - origin[0]) // squareSize
