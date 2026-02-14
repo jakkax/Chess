@@ -17,11 +17,17 @@ class LeftClick(InputHandler):
         self.startClickY = event.y
 
     def handleMotion(self, event):
-        if self.isButtonPressed and (abs(self.startLeftClickX - event.x) > self.draggingThreshold) or (abs(self.startLeftClickY - event.y) > self.draggingThreshold):
+        if self.isButtonPressed and (abs(self.startClickX - event.x) > self.draggingThreshold) or (abs(self.startClickY - event.y) > self.draggingThreshold):
             self.dragging = True
 
-    def handleRelease(self, event):
-        pass
+    def handleRelease(self, event, click, drag):
+        start = (self.startClickX, self.startClickY)
+        end = (event.x, event.y)
+
+        if self.dragging:
+            drag(start, end)
+        else:
+            click(start, end)
 
 class RightClick(InputHandler):
     def __init__(self):
@@ -32,7 +38,8 @@ class RightClick(InputHandler):
         self.startClickY = event.y
 
     def handleRelease(self, event):
-        pass
+        start = (self.startClickX, self.startClickY)
+        end = (event.x, event.y)
 
 #     row = (y - origin[1]) // squareSize
 #     column = (x - origin[0]) // squareSize

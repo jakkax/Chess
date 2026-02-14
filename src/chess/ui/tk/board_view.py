@@ -16,6 +16,8 @@ class BoardView:
 
         self.pieceScale = 1 # compared to width of square
 
+        pieceImages = {}
+
     def renderBoard(self, canvas):
         oddColour = 'peachpuff'
         evenColour = 'darksalmon'
@@ -48,20 +50,20 @@ class BoardView:
         self.blackQueen = self.loadPiece('black.queen.png')
         self.blackKing = self.loadPiece('black.king.png')
 
-    def renderPieces(self, canvas, gameState):
-        getPieceImage = {'Pawn': {True: self.whitePawn, False: self.blackPawn},
+        self.pieceImages = {'Pawn': {True: self.whitePawn, False: self.blackPawn},
                          'Rook': {True: self.whiteRook, False: self.blackRook},
                          'Knight': {True: self.whiteKnight, False: self.blackKnight},
                          'Bishop': {True: self.whiteBishop, False: self.blackBishop},
                          'Queen': {True: self.whiteQueen, False: self.blackQueen},
                          'King': {True: self.whiteKing, False: self.blackKing}}
 
+    def renderPieces(self, canvas, gameState):
         for rowIndex, row in enumerate(gameState.board):
             for columnIndex, piece in enumerate(row):
                 if piece is None:
                     continue
 
                 pieceType = piece.__class__.__name__
-                image = getPieceImage[pieceType][piece.colour]
+                image = self.pieceImages[pieceType][piece.colour]
 
                 canvas.create_image((columnIndex + 0.5) * self.pixelsInSquare + self.originX, (rowIndex + 0.5) * self.pixelsInSquare + self.originY, image = image)

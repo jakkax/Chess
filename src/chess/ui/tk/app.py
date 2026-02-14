@@ -12,16 +12,28 @@ class App:
 
         self.selectedPiece = None
     
+    def clickedSquare(self, start, end):
+        pass
+
+    def dragClick(self, start, end):
+        pass
+    
+    def handleRelease(self, event):
+        if event.num == 1:
+            self.leftClick.handleRelease(event, self.clickedSquare, self.dragClick)
+        elif event.num == 3:
+            self.rightClick.handleRelease(event)
+    
     def setupCanvas(self):
         self.canvas = tkinter.Canvas(width = self.boardView.boardWidth, height = self.boardView.boardHeight)
         self.canvas.pack()
 
-        self.canvas.bind('<Button-1>', self.leftClick.handleClick) # bind to App not inputhandler
+        self.canvas.bind('<Button-1>', self.leftClick.handleClick)
         self.canvas.bind('<B1-Motion>', self.leftClick.handleMotion)
-        self.canvas.bind('<ButtonRelease-1>', self.leftClick.handleRelease)
+        self.canvas.bind('<ButtonRelease-1>', self.handleRelease)
 
         self.canvas.bind('<Button-3>', self.rightClick.handleClick)
-        self.canvas.bind('<ButtonRelease-3>', self.rightClick.handleRelease)
+        self.canvas.bind('<ButtonRelease-3>', self.handleRelease)
     
     def setupGame(self):
         self.boardView.loadPieces() # loads pieces into variables
