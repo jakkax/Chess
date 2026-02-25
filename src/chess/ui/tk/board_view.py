@@ -3,8 +3,7 @@ from PIL import Image, ImageTk
 
 class BoardView:
     def __init__(self):
-        self.boardWidth = 800
-        self.boardHeight = 800
+        self.boardLength = 700 # in pixels # 800
 
         self.originX = 0
         self.originY = 0
@@ -12,7 +11,7 @@ class BoardView:
         self.rows = 8
         self.columns = 8
 
-        self.pixelsInSquare = self.boardWidth // self.rows
+        self.pixelsInSquare = self.boardLength // self.rows
 
         self.pieceScale = 1 # compared to width of square
 
@@ -58,12 +57,16 @@ class BoardView:
                          'King': {True: self.whiteKing, False: self.blackKing}}
 
     def renderPieces(self, canvas, gameState):
+        canvas.delete('piece')
+
         for rowIndex, row in enumerate(gameState.board):
             for columnIndex, piece in enumerate(row):
                 if piece is None:
                     continue
 
                 pieceType = piece.__class__.__name__
-                image = self.pieceImages[pieceType][piece.colour]
+                image = self.pieceImages[pieceType][piece.isWhite]
 
-                canvas.create_image((columnIndex + 0.5) * self.pixelsInSquare + self.originX, (rowIndex + 0.5) * self.pixelsInSquare + self.originY, image = image)
+                canvas.create_image((columnIndex + 0.5) * self.pixelsInSquare + self.originX,
+                (rowIndex + 0.5) * self.pixelsInSquare + self.originY,
+                image = image, tags = 'piece')

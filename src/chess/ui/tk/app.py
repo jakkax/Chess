@@ -12,20 +12,48 @@ class App:
 
         self.selectedPiece = None
     
-    def clickedSquare(self, start, end):
-        pass
+    def click(self, clickCoords):
+        clickedRow = (clickCoords[1] - self.boardView.originY) // self.boardView.pixelsInSquare
+        clickedColumn = (clickCoords[0] - self.boardView.originX) // self.boardView.pixelsInSquare
+        clickedPiece = self.gameState.board[clickedRow][clickedColumn]
+
+        if self.selectedPiece is None:
+            self.selectedPiece = clickedPiece if clickedPiece is not None and clickedPiece.isWhite == self.gameState.isWhiteTurn else None
+            return
+        
+        # there is a selected piece
+        if clickedPiece is not None and clickedPiece.isWhite == self.gameState.isWhiteTurn:
+            self.selectedPiece = clickedPiece
+            return
+
+        self.gameState.board[clickedRow][clickedColumn] = self.selectedPiece
+        self.gameState.board[self.selectedPiece.row][self.selectedPiece.column] = None
+        
+        print(self.gameState)
+
+        self.selectedPiece = None
+        self.gameState.isWhiteTurn = not self.gameState.isWhiteTurn
+
+        self.boardView.renderPieces(self.canvas, self.gameState)
+
+        # # there is a selected piece
+        # if move(start, end) is legal:
+        #     move the piece
+        #     update GameState
+        # else:
+        #     deselect the piece
 
     def dragClick(self, start, end):
         pass
     
     def handleRelease(self, event):
         if event.num == 1:
-            self.leftClick.handleRelease(event, self.clickedSquare, self.dragClick)
+            self.leftClick.handleRelease(event, self.click, self.dragClick)
         elif event.num == 3:
             self.rightClick.handleRelease(event)
     
     def setupCanvas(self):
-        self.canvas = tkinter.Canvas(width = self.boardView.boardWidth, height = self.boardView.boardHeight)
+        self.canvas = tkinter.Canvas(width = self.boardView.boardLength, height = self.boardView.boardLength)
         self.canvas.pack()
 
         self.canvas.bind('<Button-1>', self.leftClick.handleClick)
