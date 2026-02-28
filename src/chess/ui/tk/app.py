@@ -1,47 +1,51 @@
 import tkinter
 from chess.core.game_state import GameState
+from chess.core.board import Board
 from .input_handler import LeftClick, RightClick
 from .board_view import BoardView
 
 class App:
     def __init__(self):
         self.gameState = GameState()
+        self.board = Board()
         self.boardView = BoardView()
-        self.leftClick = LeftClick()
-        self.rightClick = RightClick()
+        self.leftClick = LeftClick(self.boardView.origin, self.boardView.pixelsInSquare)
+        self.rightClick = RightClick(self.boardView.origin, self.boardView.pixelsInSquare)
 
         self.selectedPiece = None
     
-    def click(self, clickCoords):
-        clickedRow = (clickCoords[1] - self.boardView.originY) // self.boardView.pixelsInSquare
-        clickedColumn = (clickCoords[0] - self.boardView.originX) // self.boardView.pixelsInSquare
-        clickedPiece = self.gameState.board[clickedRow][clickedColumn]
+    def click(self, clickedSquare):
+        clickedRow, clickedColumn = clickedSquare[0], clickedSquare[1]
+        clickedPiece = self.board.board[clickedRow][clickedColumn]
 
-        if self.selectedPiece is None:
-            self.selectedPiece = clickedPiece if clickedPiece is not None and clickedPiece.isWhite == self.gameState.isWhiteTurn else None
+        if self.selectedPiece is None and clickedPiece is not None and clickedPiece.isWhite == self.gameState.isWhiteTurn:
+            self.selectedPiece = clickedPiece
+            self.boardView.selectPiece(self.canvas, clickedSquare, self.board.board)
             return
         
         # there is a selected piece
         if clickedPiece is not None and clickedPiece.isWhite == self.gameState.isWhiteTurn:
             self.selectedPiece = clickedPiece
+            self.boardView.selectPiece(self.canvas, clickedSquare, self.board.board)
             return
 
-        self.gameState.board[clickedRow][clickedColumn] = self.selectedPiece
-        self.gameState.board[self.selectedPiece.row][self.selectedPiece.column] = None
-        
-        print(self.gameState)
+        # the clicked square is empty / there's an enemy piece on it
+        self.board.board[clickedRow][clickedColumn] = self.selectedPiece
+        self.board.board[self.selectedPiece.row][self.selectedPiece.column] = None
 
+        self.selectedPiece.row = clickedRow
+        self.selectedPiece.column = clickedColumn
         self.selectedPiece = None
         self.gameState.isWhiteTurn = not self.gameState.isWhiteTurn
 
-        self.boardView.renderPieces(self.canvas, self.gameState)
+        self.boardView.deselectPiece(self.canvas)
+        self.boardView.renderPieces(self.canvas, self.board.board)
 
-        # # there is a selected piece
-        # if move(start, end) is legal:
+        # if engine.isLegalMove(move(?)):
         #     move the piece
         #     update GameState
         # else:
-        #     deselect the piece
+        #     self.selectedPiece = None
 
     def dragClick(self, start, end):
         pass
@@ -65,10 +69,10 @@ class App:
     
     def setupGame(self):
         self.boardView.loadPieces() # loads pieces into variables
-        self.gameState.setupBoard(True) # white pieces are down
+        self.board.setupBoard(True) # True --> white pieces are down
         
         self.boardView.renderBoard(self.canvas)
-        self.boardView.renderPieces(self.canvas, self.gameState)
+        self.boardView.renderPieces(self.canvas, self.board.board)
 
     def run(self):
         self.setupCanvas()

@@ -1,9 +1,6 @@
 from chess.ui.tk.app import App
 
 def main():
-    # state = GameState.startingPosition()
-    # engine = Engine()
-    # app = App(state, engine)
     app = App()
     app.run()
 

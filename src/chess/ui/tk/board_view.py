@@ -7,6 +7,7 @@ class BoardView:
 
         self.originX = 0
         self.originY = 0
+        self.origin = (self.originX, self.originY)
 
         self.rows = 8
         self.columns = 8
@@ -18,12 +19,12 @@ class BoardView:
         pieceImages = {}
 
     def renderBoard(self, canvas):
-        oddColour = 'peachpuff'
-        evenColour = 'darksalmon'
+        lightColour = 'peachpuff'
+        darkColour = 'darksalmon'
 
         for i in range(self.columns):
             for j in range(self.rows):
-                colour = evenColour if (i + j) % 2 == 1 else oddColour
+                colour = lightColour if (i + j) % 2 == 0 else darkColour
                 canvas.create_rectangle((j) * self.pixelsInSquare + self.originX,
                                        (i) * self.pixelsInSquare + self.originY,
                                        (j + 1) * self.pixelsInSquare + self.originX,
@@ -56,10 +57,10 @@ class BoardView:
                          'Queen': {True: self.whiteQueen, False: self.blackQueen},
                          'King': {True: self.whiteKing, False: self.blackKing}}
 
-    def renderPieces(self, canvas, gameState):
+    def renderPieces(self, canvas, board):
         canvas.delete('piece')
 
-        for rowIndex, row in enumerate(gameState.board):
+        for rowIndex, row in enumerate(board):
             for columnIndex, piece in enumerate(row):
                 if piece is None:
                     continue
@@ -70,3 +71,19 @@ class BoardView:
                 canvas.create_image((columnIndex + 0.5) * self.pixelsInSquare + self.originX,
                 (rowIndex + 0.5) * self.pixelsInSquare + self.originY,
                 image = image, tags = 'piece')
+    
+    def deselectPiece(self, canvas):
+        canvas.delete('selectedPiece')
+    
+    def selectPiece(self, canvas, square, board):
+        self.deselectPiece(canvas)
+
+        if (square[0] + square[1]) % 2 == 0:
+            colour = 'gray65' # light square
+        else:
+            colour = 'gray60' # dark square
+
+        x, y = square[1] * self.pixelsInSquare, square[0] * self.pixelsInSquare
+        canvas.create_rectangle(x, y, x + self.pixelsInSquare, y + self.pixelsInSquare, fill=colour, width = 0, tags='selectedPiece')
+
+        self.renderPieces(canvas, board)
