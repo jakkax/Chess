@@ -1,6 +1,7 @@
 import tkinter
 from chess.core.game_state import GameState
 from chess.core.board import Board
+from chess.core.move import Move
 from .input_handler import LeftClick, RightClick
 from .board_view import BoardView
 
@@ -18,18 +19,28 @@ class App:
         clickedRow, clickedColumn = clickedSquare[0], clickedSquare[1]
         clickedPiece = self.board.board[clickedRow][clickedColumn]
 
-        if self.selectedPiece is None and clickedPiece is not None and clickedPiece.isWhite == self.gameState.isWhiteTurn:
-            self.selectedPiece = clickedPiece
-            self.boardView.selectPiece(self.canvas, clickedSquare, self.board.board)
+        if self.selectedPiece is None:
+            if clickedPiece is not None and clickedPiece.isWhite == self.gameState.isWhiteTurn:
+                self.selectedPiece = clickedPiece
+                self.boardView.selectPiece(self.canvas, clickedSquare, self.board.board)
             return
         
         # there is a selected piece
+        
         if clickedPiece is not None and clickedPiece.isWhite == self.gameState.isWhiteTurn:
             self.selectedPiece = clickedPiece
             self.boardView.selectPiece(self.canvas, clickedSquare, self.board.board)
             return
-
+        
         # the clicked square is empty / there's an enemy piece on it
+        
+        # fromSquare = (self.selectedPiece.row, self.self.selectedPiece.column)
+        # move = Move(fromSquare, clickedSquare) # from selected piece's square to the clicked square
+        # if engine.isLegalMove(move):
+        #     self.gameState.applyMove(move, self.board.board)
+        # else:
+        #     self.selectedPiece = None
+
         self.board.board[clickedRow][clickedColumn] = self.selectedPiece
         self.board.board[self.selectedPiece.row][self.selectedPiece.column] = None
 
@@ -40,12 +51,6 @@ class App:
 
         self.boardView.deselectPiece(self.canvas)
         self.boardView.renderPieces(self.canvas, self.board.board)
-
-        # if engine.isLegalMove(move(?)):
-        #     move the piece
-        #     update GameState
-        # else:
-        #     self.selectedPiece = None
 
     def dragClick(self, start, end):
         pass
