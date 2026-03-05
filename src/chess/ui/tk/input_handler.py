@@ -7,11 +7,11 @@ class InputHandler:
         self.startClickY = -1
 
         self.dragging = False
-        self.draggingThreshold = 3 # mouse needs to move x pixels for the click to be considered a drag
+        self.draggingThreshold = 5 # mouse needs to move x pixels for the click to be considered a drag
     
     def pixelsToIndices(self, x, y):
-        return ((y - self.origin[1]) // self.pixelsInSquare,
-                 (x - self.origin[0]) // self.pixelsInSquare)
+        return (max(0, min(7, (y - self.origin[1]) // self.pixelsInSquare)),
+                 max(0, min(7, (x - self.origin[0]) // self.pixelsInSquare)))
 
 class LeftClick(InputHandler):
     def __init__(self, boardOrigin, pixelsInSquare):
@@ -33,6 +33,7 @@ class LeftClick(InputHandler):
         end = self.pixelsToIndices(event.x, event.y)
 
         if self.dragging:
+            self.dragging = False
             drag(start, end) # start != end
         else:
             click(end) # start == end

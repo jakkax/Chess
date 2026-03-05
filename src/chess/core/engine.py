@@ -1,2 +1,3 @@
 class Engine:
-    pass
+    def isLegalMove(self, move, board):
+        return True
