@@ -3,7 +3,7 @@ from PIL import Image, ImageTk
 
 class BoardView:
     def __init__(self):
-        self.boardLength = 800 # in pixels
+        self.boardLength = 700 # in pixels # 800
 
         self.originX = 0
         self.originY = 0
