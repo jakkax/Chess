@@ -1,5 +1,4 @@
-from .pieces import Pawn, Rook, Knight, Bishop, Queen, King
-
 class Engine:
     def isLegalMove(self, move, board):
-        return True
+        piece = board[move.fromSquare[0]][move.fromSquare[1]]
+        return move.toSquare in piece.pseudoLegalMoves(board)

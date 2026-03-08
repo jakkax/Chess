@@ -15,7 +15,25 @@ class Pawn(Piece):
         super().__init__(isWhite, row, column)
     
     def pseudoLegalMoves(self, board): # all possible ways a piece can move regardless of rules
-        pass
+        moveDirection = -1 if self.isWhite else 1
+        doubleMoveRow = 6 if self.isWhite else 1
+        pseudoLegalMoves = []
+
+        if board[self.row + moveDirection][self.column] is None:
+            pseudoLegalMoves.append((self.row + moveDirection, self.column))
+            if self.row == doubleMoveRow and board[self.row + 2*moveDirection][self.column] is None:
+                pseudoLegalMoves.append((self.row + 2*moveDirection, self.column))
+        
+        captureSquares = [(self.row + moveDirection, self.column - 1), (self.row + moveDirection, self.column + 1)]
+        for capture in captureSquares:
+            if capture[1] not in range(8):
+                continue
+
+            piece = board[capture[0]][capture[1]]
+            if piece is not None and piece.isWhite != self.isWhite:
+                pseudoLegalMoves.append(capture)
+        
+        return pseudoLegalMoves
     
     def __str__(self):
         return ' pawn '
@@ -42,7 +60,8 @@ class Rook(Piece):
                 
                 if board[row][column].isWhite != self.isWhite:
                     pseudoLegalMoves.append((row, column))
-                    break
+                
+                break
         
         return pseudoLegalMoves
     
@@ -94,7 +113,8 @@ class Bishop(Piece):
                 
                 if board[row][column].isWhite != self.isWhite:
                     pseudoLegalMoves.append((row, column))
-                    break
+                
+                break
         
         return pseudoLegalMoves
     
@@ -123,7 +143,8 @@ class Queen(Piece):
                 
                 if board[row][column].isWhite != self.isWhite:
                     pseudoLegalMoves.append((row, column))
-                    break
+                
+                break
         
         return pseudoLegalMoves
     

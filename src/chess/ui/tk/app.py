@@ -18,12 +18,13 @@ class App:
         self.selectedPiece = None
     
     def click(self, clickedSquare):
-        clickedRow, clickedColumn = clickedSquare[0], clickedSquare[1]
+        clickedRow, clickedColumn = clickedSquare
         clickedPiece = self.board.board[clickedRow][clickedColumn]
 
         if self.selectedPiece is None:
             if clickedPiece is not None and clickedPiece.isWhite == self.gameState.isWhiteTurn:
                 self.selectedPiece = clickedPiece
+                print(self.selectedPiece.pseudoLegalMoves(self.board.board))
                 self.boardView.selectPiece(self.canvas, clickedSquare, self.board.board)
             return
         
@@ -37,6 +38,7 @@ class App:
 
             if clickedPiece.isWhite == self.gameState.isWhiteTurn:
                 self.selectedPiece = clickedPiece
+                print(self.selectedPiece.pseudoLegalMoves(self.board.board))
                 self.boardView.selectPiece(self.canvas, clickedSquare, self.board.board)
                 return
         
@@ -44,6 +46,7 @@ class App:
         
         fromSquare = (self.selectedPiece.row, self.selectedPiece.column)
         move = Move(fromSquare, clickedSquare) # from selected piece's square to the clicked square
+
         if self.engine.isLegalMove(move, self.board.board):
             self.gameState.applyMove(move, self.board.board)
 
@@ -84,7 +87,7 @@ class App:
     
     def setupGame(self):
         self.boardView.loadPieces() # loads pieces into variables
-        self.board.setupBoard(True) # True --> white pieces are down
+        self.board.setupBoard()
         
         self.boardView.renderBoard(self.canvas)
         self.boardView.renderPieces(self.canvas, self.board.board)
