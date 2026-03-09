@@ -24,8 +24,8 @@ class App:
         if self.selectedPiece is None:
             if clickedPiece is not None and clickedPiece.isWhite == self.gameState.isWhiteTurn:
                 self.selectedPiece = clickedPiece
-                print(self.selectedPiece.pseudoLegalMoves(self.board.board))
-                self.boardView.selectPiece(self.canvas, clickedSquare, self.board.board)
+                self.boardView.selectPiece(clickedSquare, self.board.board)
+                self.boardView.renderLegalMoves(self.selectedPiece.pseudoLegalMoves(self.board.board))
             return
         
         # there is a selected piece
@@ -33,13 +33,14 @@ class App:
         if clickedPiece is not None:
             if clickedPiece == self.selectedPiece:
                 self.selectedPiece = None
-                self.boardView.deselectPiece(self.canvas)
+                self.boardView.deselectPiece()
+                self.boardView.deleteLegalMoves()
                 return
 
             if clickedPiece.isWhite == self.gameState.isWhiteTurn:
                 self.selectedPiece = clickedPiece
-                print(self.selectedPiece.pseudoLegalMoves(self.board.board))
-                self.boardView.selectPiece(self.canvas, clickedSquare, self.board.board)
+                self.boardView.selectPiece(clickedSquare, self.board.board)
+                self.boardView.renderLegalMoves(self.selectedPiece.pseudoLegalMoves(self.board.board))
                 return
         
         # the clicked square is empty / there's an enemy piece on it
@@ -55,11 +56,13 @@ class App:
             self.selectedPiece.column = clickedColumn
             self.selectedPiece = None
 
-            self.boardView.deselectPiece(self.canvas)
-            self.boardView.renderPieces(self.canvas, self.board.board)
+            self.boardView.deselectPiece()
+            self.boardView.deleteLegalMoves()
+            self.boardView.renderPieces(self.board.board)
         else:
             self.selectedPiece = None
-            self.boardView.deselectPiece(self.canvas)
+            self.boardView.deselectPiece()
+            self.boardView.deleteLegalMoves()
 
     def dragClick(self, start, end):
         startingSquare = self.board.board[start[0]][start[1]]
@@ -78,6 +81,8 @@ class App:
         self.canvas = tkinter.Canvas(width = self.boardView.boardLength, height = self.boardView.boardLength)
         self.canvas.pack()
 
+        self.boardView.canvas = self.canvas
+
         self.canvas.bind('<Button-1>', self.leftClick.handleClick)
         self.canvas.bind('<B1-Motion>', self.leftClick.handleMotion)
         self.canvas.bind('<ButtonRelease-1>', self.handleRelease)
@@ -86,11 +91,11 @@ class App:
         self.canvas.bind('<ButtonRelease-3>', self.handleRelease)
     
     def setupGame(self):
-        self.boardView.loadPieces() # loads pieces into variables
+        self.boardView.loadAssets() # loads pieces into variables
         self.board.setupBoard()
         
-        self.boardView.renderBoard(self.canvas)
-        self.boardView.renderPieces(self.canvas, self.board.board)
+        self.boardView.renderBoard()
+        self.boardView.renderPieces(self.board.board)
 
     def run(self):
         self.setupCanvas()
