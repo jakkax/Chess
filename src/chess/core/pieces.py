@@ -4,8 +4,11 @@ class Piece:
         self.row = row
         self.column = column
     
-    def pseudoLegalMoves(self, board):
+    def baseMovement(self, board): # all possible ways a piece can move regardless of rules
         pass
+
+    def attacksSquares(self, board):
+        return self.baseMovement(board)
     
     def __str__(self):
         return 'piece'
@@ -14,26 +17,30 @@ class Pawn(Piece):
     def __init__(self, isWhite, row, column):
         super().__init__(isWhite, row, column)
     
-    def pseudoLegalMoves(self, board): # all possible ways a piece can move regardless of rules
+    def attacksSquares(self, board):
+        moveDirection = -1 if self.isWhite else 1
+        captureSquares = [(self.row + moveDirection, self.column - 1), (self.row + moveDirection, self.column + 1)]
+        return captureSquares
+    
+    def baseMovement(self, board):
         moveDirection = -1 if self.isWhite else 1
         doubleMoveRow = 6 if self.isWhite else 1
-        pseudoLegalMoves = []
+        baseMovement = []
 
         if board[self.row + moveDirection][self.column] is None:
-            pseudoLegalMoves.append((self.row + moveDirection, self.column))
+            baseMovement.append((self.row + moveDirection, self.column))
             if self.row == doubleMoveRow and board[self.row + 2*moveDirection][self.column] is None:
-                pseudoLegalMoves.append((self.row + 2*moveDirection, self.column))
+                baseMovement.append((self.row + 2*moveDirection, self.column))
         
-        captureSquares = [(self.row + moveDirection, self.column - 1), (self.row + moveDirection, self.column + 1)]
-        for capture in captureSquares:
-            if capture[1] not in range(8):
+        for capture in [(self.row + moveDirection, self.column - 1), (self.row + moveDirection, self.column + 1)]:
+            if capture[1] not in range(8) or capture[0] not in range(8):
                 continue
 
             piece = board[capture[0]][capture[1]]
             if piece is not None and piece.isWhite != self.isWhite:
-                pseudoLegalMoves.append(capture)
+                baseMovement.append(capture)
         
-        return pseudoLegalMoves
+        return baseMovement
     
     def __str__(self):
         return ' pawn '
@@ -42,8 +49,8 @@ class Rook(Piece):
     def __init__(self, isWhite, row, column):
         super().__init__(isWhite, row, column)
     
-    def pseudoLegalMoves(self, board):
-        pseudoLegalMoves = []
+    def baseMovement(self, board):
+        baseMovement = []
         
         moveDirections = [(-1, 0), (0, -1), (1, 0), (0, 1)]
         for r, c in moveDirections:
@@ -55,15 +62,15 @@ class Rook(Piece):
                     break
                 
                 if board[row][column] is None:
-                    pseudoLegalMoves.append((row, column))
+                    baseMovement.append((row, column))
                     continue
                 
                 if board[row][column].isWhite != self.isWhite:
-                    pseudoLegalMoves.append((row, column))
+                    baseMovement.append((row, column))
                 
                 break
         
-        return pseudoLegalMoves
+        return baseMovement
     
     def __str__(self):
         return ' rook '
@@ -72,10 +79,10 @@ class Knight(Piece):
     def __init__(self, isWhite, row, column):
         super().__init__(isWhite, row, column)
     
-    def pseudoLegalMoves(self, board):
+    def baseMovement(self, board):
         r, c = self.row, self.column
         possibleMoves = [(r - 1, c - 2), (r + 1, c - 2), (r - 2, c - 1), (r - 2, c + 1), (r + 2, c - 1), (r + 2, c + 1), (r - 1, c + 2), (r + 1, c + 2)]
-        pseudoLegalMoves = []
+        baseMovement = []
         
         for square in possibleMoves:
             row = square[0]
@@ -84,9 +91,9 @@ class Knight(Piece):
                 continue
 
             if board[row][column] is None or board[row][column].isWhite != self.isWhite:
-                pseudoLegalMoves.append(square)
+                baseMovement.append(square)
         
-        return pseudoLegalMoves
+        return baseMovement
     
     def __str__(self):
         return 'knight'
@@ -95,8 +102,8 @@ class Bishop(Piece):
     def __init__(self, isWhite, row, column):
         super().__init__(isWhite, row, column)
     
-    def pseudoLegalMoves(self, board):
-        pseudoLegalMoves = []
+    def baseMovement(self, board):
+        baseMovement = []
         
         moveDirections = [(-1, -1), (1, -1), (1, 1), (-1, 1)]
         for r, c in moveDirections:
@@ -108,15 +115,15 @@ class Bishop(Piece):
                     break
                 
                 if board[row][column] is None:
-                    pseudoLegalMoves.append((row, column))
+                    baseMovement.append((row, column))
                     continue
                 
                 if board[row][column].isWhite != self.isWhite:
-                    pseudoLegalMoves.append((row, column))
+                    baseMovement.append((row, column))
                 
                 break
         
-        return pseudoLegalMoves
+        return baseMovement
     
     def __str__(self):
         return 'bishop'
@@ -125,8 +132,8 @@ class Queen(Piece):
     def __init__(self, isWhite, row, column):
         super().__init__(isWhite, row, column)
     
-    def pseudoLegalMoves(self, board):
-        pseudoLegalMoves = []
+    def baseMovement(self, board):
+        baseMovement = []
         
         moveDirections = [(-1, -1), (1, -1), (1, 1), (-1, 1), (-1, 0), (0, -1), (1, 0), (0, 1)]
         for r, c in moveDirections:
@@ -138,15 +145,15 @@ class Queen(Piece):
                     break
                 
                 if board[row][column] is None:
-                    pseudoLegalMoves.append((row, column))
+                    baseMovement.append((row, column))
                     continue
                 
                 if board[row][column].isWhite != self.isWhite:
-                    pseudoLegalMoves.append((row, column))
+                    baseMovement.append((row, column))
                 
                 break
         
-        return pseudoLegalMoves
+        return baseMovement
     
     def __str__(self):
         return 'queen '
@@ -155,8 +162,8 @@ class King(Piece):
     def __init__(self, isWhite, row, column):
         super().__init__(isWhite, row, column)
     
-    def pseudoLegalMoves(self, board):
-        pseudoLegalMoves = []
+    def baseMovement(self, board):
+        baseMovement = []
         
         for r in range(-1, 2): # -1, 0, 1
             for c in range(-1, 2):
@@ -167,9 +174,9 @@ class King(Piece):
                     continue
                 
                 if board[row][column] is None or board[row][column].isWhite != self.isWhite:
-                    pseudoLegalMoves.append((row, column))
+                    baseMovement.append((row, column))
         
-        return pseudoLegalMoves
+        return baseMovement
     
     def __str__(self):
         return ' king '

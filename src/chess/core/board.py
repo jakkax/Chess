@@ -10,8 +10,6 @@ class Board:
                       [None] * 8,
                       [None] * 8,
                       [None] * 8]
-        
-        self.isWhiteTurn = True
     
     def setupBoard(self):
         self.board = [[Rook(False, 0, 0), Knight(False, 0, 1), Bishop(False, 0, 2), Queen(False, 0, 3), King(False, 0, 4), Bishop(False, 0, 5), Knight(False, 0, 6), Rook(False, 0, 7)],
@@ -22,6 +20,28 @@ class Board:
                       [None, None, None, None, None, None, None, None],
                       [Pawn(True, 6, 0), Pawn(True, 6, 1), Pawn(True, 6, 2), Pawn(True, 6, 3), Pawn(True, 6, 4), Pawn(True, 6, 5), Pawn(True, 6, 6), Pawn(True, 6, 7)],
                       [Rook(True, 7, 0), Knight(True, 7, 1), Bishop(True, 7, 2), Queen(True, 7, 3), King(True, 7, 4), Bishop(True, 7, 5), Knight(True, 7, 6), Rook(True, 7, 7)]]
+
+    def attackMap(self, colour):
+        attackMap = set()
+
+        for row in self.board:
+            for piece in row:
+                if piece is None:
+                    continue
+                
+                if piece.isWhite == colour:
+                    attackMap.update(piece.baseMovement(self.board))
+        
+        return list(attackMap)
+    
+    def findKing(self, colour):
+        for row in self.board:
+            for piece in row:
+                if piece is None:
+                    continue
+
+                if type(piece).__name__.lower() == 'king' and piece.isWhite == colour:
+                    return (piece.row, piece.column)
 
     def __str__(self):
         board = ''

@@ -1,4 +1,6 @@
 import tkinter
+from copy import deepcopy
+
 from chess.core.game_state import GameState
 from chess.core.board import Board
 from chess.core.engine import Engine
@@ -25,7 +27,7 @@ class App:
             if clickedPiece is not None and clickedPiece.isWhite == self.gameState.isWhiteTurn:
                 self.selectedPiece = clickedPiece
                 self.boardView.selectPiece(clickedSquare, self.board.board)
-                self.boardView.renderLegalMoves(self.selectedPiece.pseudoLegalMoves(self.board.board))
+                self.boardView.renderLegalMoves(self.selectedPiece.baseMovement(self.board.board))
             return
         
         # there is a selected piece
@@ -40,7 +42,7 @@ class App:
             if clickedPiece.isWhite == self.gameState.isWhiteTurn:
                 self.selectedPiece = clickedPiece
                 self.boardView.selectPiece(clickedSquare, self.board.board)
-                self.boardView.renderLegalMoves(self.selectedPiece.pseudoLegalMoves(self.board.board))
+                self.boardView.renderLegalMoves(self.selectedPiece.baseMovement(self.board.board))
                 return
         
         # the clicked square is empty / there's an enemy piece on it
@@ -49,11 +51,13 @@ class App:
         move = Move(fromSquare, clickedSquare) # from selected piece's square to the clicked square
 
         if self.engine.isLegalMove(move, self.board.board):
-            self.gameState.applyMove(move, self.board.board)
+            self.board.board = self.gameState.applyMove(move, deepcopy(self.board.board))
+            print(self.board.board)
 
-            # TODO: move this code somewhere else
-            self.selectedPiece.row = clickedRow
-            self.selectedPiece.column = clickedColumn
+            self.gameState.isWhiteTurn = not self.gameState.isWhiteTurn
+
+            self.selectedPiece.row = move.toSquare[0]
+            self.selectedPiece.column = move.toSquare[1]
             self.selectedPiece = None
 
             self.boardView.deselectPiece()
