@@ -1,6 +1,7 @@
-from .pieces import Pawn, Rook, Knight, Bishop, Queen, King
+from .pieces import Pawn, Rook, Knight, Bishop, Queen, King, Piece
+from .move import Move
 
-class Board:
+class Position:
     def __init__(self):
         self.board = [[None] * 8,
                       [None] * 8,
@@ -21,6 +22,28 @@ class Board:
                       [Pawn(True, 6, 0), Pawn(True, 6, 1), Pawn(True, 6, 2), Pawn(True, 6, 3), Pawn(True, 6, 4), Pawn(True, 6, 5), Pawn(True, 6, 6), Pawn(True, 6, 7)],
                       [Rook(True, 7, 0), Knight(True, 7, 1), Bishop(True, 7, 2), Queen(True, 7, 3), King(True, 7, 4), Bishop(True, 7, 5), Knight(True, 7, 6), Rook(True, 7, 7)]]
 
+    # def setPiece(self, piece, square):
+    #     self.board[square[0]][square[1]] = piece
+    
+    # def removePiece(self, square):
+    #     self.board[square[0]][square[1]] = None
+    
+    def movePiece(self, move: Move):
+        self.board[move.toSquare[0]][move.toSquare[1]] = self.board[move.fromSquare[0]][move.fromSquare[1]]
+        self.board[move.fromSquare[0]][move.fromSquare[1]] = None
+
+        piece: Piece = self.board[move.toSquare[0]][move.toSquare[1]]
+        piece.row = move.toSquare[0]
+        piece.column = move.toSquare[1]
+    
+    def unMove(self, move: Move, capturedPiece):
+        self.board[move.fromSquare[0]][move.fromSquare[1]] = self.board[move.toSquare[0]][move.toSquare[1]]
+        self.board[move.toSquare[0]][move.toSquare[1]] = capturedPiece
+
+        piece: Piece = self.board[move.fromSquare[0]][move.fromSquare[1]]
+        piece.row = move.fromSquare[0]
+        piece.column = move.fromSquare[1]
+
     def attackMap(self, colour):
         attackMap = set()
 
@@ -30,7 +53,7 @@ class Board:
                     continue
                 
                 if piece.isWhite == colour:
-                    attackMap.update(piece.baseMovement(self.board))
+                    attackMap.update(piece.attacksSquares(self.board))
         
         return list(attackMap)
     

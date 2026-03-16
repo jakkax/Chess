@@ -1,8 +1,6 @@
 import tkinter
-from copy import deepcopy
 
 from chess.core.game_state import GameState
-from chess.core.board import Board
 from chess.core.engine import Engine
 from chess.core.move import Move
 from .input_handler import LeftClick, RightClick
@@ -11,7 +9,6 @@ from .board_view import BoardView
 class App:
     def __init__(self):
         self.gameState = GameState()
-        self.board = Board()
         self.engine = Engine()
         self.boardView = BoardView()
         self.leftClick = LeftClick(self.boardView.origin, self.boardView.pixelsInSquare)
@@ -21,13 +18,13 @@ class App:
     
     def click(self, clickedSquare):
         clickedRow, clickedColumn = clickedSquare
-        clickedPiece = self.board.board[clickedRow][clickedColumn]
+        clickedPiece = self.gameState.position.board[clickedRow][clickedColumn]
 
         if self.selectedPiece is None:
             if clickedPiece is not None and clickedPiece.isWhite == self.gameState.isWhiteTurn:
                 self.selectedPiece = clickedPiece
-                self.boardView.selectPiece(clickedSquare, self.board.board)
-                self.boardView.renderLegalMoves(self.selectedPiece.baseMovement(self.board.board))
+                self.boardView.selectPiece(clickedSquare, self.gameState.position.board)
+                self.boardView.renderLegalMoves(self.selectedPiece.baseMovement(self.gameState.position.board))
             return
         
         # there is a selected piece
@@ -41,8 +38,8 @@ class App:
 
             if clickedPiece.isWhite == self.gameState.isWhiteTurn:
                 self.selectedPiece = clickedPiece
-                self.boardView.selectPiece(clickedSquare, self.board.board)
-                self.boardView.renderLegalMoves(self.selectedPiece.baseMovement(self.board.board))
+                self.boardView.selectPiece(clickedSquare, self.gameState.position.board)
+                self.boardView.renderLegalMoves(self.selectedPiece.baseMovement(self.gameState.position.board))
                 return
         
         # the clicked square is empty / there's an enemy piece on it
@@ -50,27 +47,24 @@ class App:
         fromSquare = (self.selectedPiece.row, self.selectedPiece.column)
         move = Move(fromSquare, clickedSquare) # from selected piece's square to the clicked square
 
-        if self.engine.isLegalMove(move, self.board.board):
-            self.board.board = self.gameState.applyMove(move, deepcopy(self.board.board))
-            print(self.board.board)
+        if self.engine.isLegalMove(move, self.gameState.position, self.gameState):
+            self.gameState.position.movePiece(move)
 
             self.gameState.isWhiteTurn = not self.gameState.isWhiteTurn
 
-            self.selectedPiece.row = move.toSquare[0]
-            self.selectedPiece.column = move.toSquare[1]
             self.selectedPiece = None
 
             self.boardView.deselectPiece()
             self.boardView.deleteLegalMoves()
-            self.boardView.renderPieces(self.board.board)
+            self.boardView.renderPieces(self.gameState.position.board)
         else:
             self.selectedPiece = None
             self.boardView.deselectPiece()
             self.boardView.deleteLegalMoves()
 
     def dragClick(self, start, end):
-        startingSquare = self.board.board[start[0]][start[1]]
-        endingSquare = self.board.board[end[0]][end[1]]
+        startingSquare = self.gameState.position.board[start[0]][start[1]]
+        endingSquare = self.gameState.position.board[end[0]][end[1]]
 
         if startingSquare is None or startingSquare.isWhite != self.gameState.isWhiteTurn or (endingSquare is not None and startingSquare.isWhite == endingSquare.isWhite):
             self.click(end)
@@ -96,10 +90,9 @@ class App:
     
     def setupGame(self):
         self.boardView.loadAssets() # loads pieces into variables
-        self.board.setupBoard()
         
         self.boardView.renderBoard()
-        self.boardView.renderPieces(self.board.board)
+        self.boardView.renderPieces(self.gameState.position.board)
 
     def run(self):
         self.setupCanvas()
