@@ -1,0 +1,161 @@
+src/
+├── main.py
+│
+└── chess/
+    ├── core/
+    │   ├── board.py
+    │   ├── pieces.py
+    │   ├── move.py
+    │   ├── move_generator.py
+    │   ├── rules.py
+    │   └── game_state.py
+    │
+    ├── engine/
+    │   ├── evaluator.py
+    │   ├── search.py
+    │   └── engine.py
+    │
+    ├── ui/
+    │   └── tk/
+    │       ├── app.py
+    │       ├── board_view.py
+    │       ├── input_handler.py
+    │       └── assets/
+    │
+    └── controller/
+        └── game_controller.py
+
+core/ → pure chess logic (no opinions, no UI, no AI)
+
+board.py
+✅ Should:
+Store piece placement (e.g. 8×8 grid)
+Provide read access (what’s on square X?)
+Provide basic helpers (inside board, empty, etc.)
+❌ Should NOT:
+Know turn, check, legality
+Apply moves (no mutation logic)
+Contain rules
+
+pieces.py
+✅ Should:
+Define movement patterns
+Generate pseudo-legal moves per piece
+❌ Should NOT:
+Check legality (check, pins, etc.)
+Modify game state
+Know about turns or game rules
+
+move.py
+✅ Should:
+Represent a move as data only
+from_square
+to_square
+promotion, etc.
+❌ Should NOT:
+Execute itself
+Contain logic
+Know about board or rules
+
+move_generator.py
+✅ Should:
+Collect all pseudo-legal moves from all pieces
+Be the single entry point for move generation
+❌ Should NOT:
+Decide legality (no check detection)
+Modify state
+
+rules.py
+✅ Should:
+Filter pseudo-legal → legal moves
+Detect:
+check
+checkmate
+stalemate
+Handle special rules:
+castling
+en passant
+❌ Should NOT:
+Generate moves from scratch
+Store state
+Mutate board
+
+game_state.py
+✅ Should:
+Be the single source of truth
+Contain:
+board
+turn
+castling rights
+en passant square
+Apply moves:
+new_state = state.apply_move(move)
+❌ Should NOT:
+Contain UI logic
+Contain engine/search logic
+Decide strategy
+engine/ → decision-making (AI)
+
+evaluator.py
+✅ Should:
+Score a position (number)
+Use heuristics (material, position, etc.)
+❌ Should NOT:
+Generate moves
+Modify state
+Contain search logic
+
+search.py
+✅ Should:
+Implement algorithms:
+minimax
+alpha-beta
+Explore game tree
+❌ Should NOT:
+Know UI
+Contain evaluation logic details (delegate to evaluator)
+
+engine.py
+✅ Should:
+Orchestrate:
+call search
+return best move
+❌ Should NOT:
+Implement search itself
+Know UI or input
+controller/ → glue layer (VERY important)
+
+game_controller.py
+✅ Should:
+Receive input from UI
+Ask core for legal moves
+Update game state
+Call engine when needed
+❌ Should NOT:
+Implement rules
+Implement UI drawing
+Implement search
+ui/tk/ → presentation only
+
+app.py
+✅ Should:
+Create window
+Initialise UI components
+❌ Should NOT:
+Contain game logic
+
+board_view.py
+✅ Should:
+Draw board + pieces
+Reflect current state visually
+❌ Should NOT:
+Decide moves
+Modify state
+
+input_handler.py
+✅ Should:
+Convert clicks → user intent (e.g. “move e2 → e4”)
+Pass actions to controller
+❌ Should NOT:
+Validate moves
+Touch game rules

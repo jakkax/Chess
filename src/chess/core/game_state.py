@@ -1,4 +1,4 @@
-from .board import Position
+from .position import Position
 
 class GameState:
     def __init__(self):
@@ -6,3 +6,8 @@ class GameState:
         self.position.setupBoard()
 
         self.isWhiteTurn = True
+
+    def applyMove(self, move):
+        self.position.movePiece(move)
+        
+        self.isWhiteTurn = not self.isWhiteTurn

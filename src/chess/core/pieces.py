@@ -1,14 +1,21 @@
 class Piece:
-    def __init__(self, isWhite, type = None):
+    def __init__(self, isWhite, row, column):
         self.isWhite = isWhite
-        self.type = type
+        self.row = row
+        self.column = column
+    
+    def baseMovement(self, board): # all possible ways a piece can move regardless of rules
+        pass
+
+    def attacksSquares(self, board):
+        return self.baseMovement(board)
     
     def __str__(self):
         return 'piece'
 
 class Pawn(Piece):
-    def __init__(self, isWhite):
-        super().__init__(isWhite)
+    def __init__(self, isWhite, row, column):
+        super().__init__(isWhite, row, column)
     
     def attacksSquares(self, board):
         moveDirection = -1 if self.isWhite else 1
@@ -39,8 +46,8 @@ class Pawn(Piece):
         return ' pawn '
 
 class Rook(Piece):
-    def __init__(self, isWhite):
-        super().__init__(isWhite)
+    def __init__(self, isWhite, row, column):
+        super().__init__(isWhite, row, column)
     
     def baseMovement(self, board):
         baseMovement = []
@@ -69,8 +76,8 @@ class Rook(Piece):
         return ' rook '
 
 class Knight(Piece):
-    def __init__(self, isWhite):
-        super().__init__(isWhite)
+    def __init__(self, isWhite, row, column):
+        super().__init__(isWhite, row, column)
     
     def baseMovement(self, board):
         r, c = self.row, self.column
@@ -92,8 +99,8 @@ class Knight(Piece):
         return 'knight'
 
 class Bishop(Piece):
-    def __init__(self, isWhite):
-        super().__init__(isWhite)
+    def __init__(self, isWhite, row, column):
+        super().__init__(isWhite, row, column)
     
     def baseMovement(self, board):
         baseMovement = []
@@ -122,8 +129,8 @@ class Bishop(Piece):
         return 'bishop'
 
 class Queen(Piece):
-    def __init__(self, isWhite):
-        super().__init__(isWhite)
+    def __init__(self, isWhite, row, column):
+        super().__init__(isWhite, row, column)
     
     def baseMovement(self, board):
         baseMovement = []
@@ -152,8 +159,8 @@ class Queen(Piece):
         return 'queen '
 
 class King(Piece):
-    def __init__(self, isWhite):
-        super().__init__(isWhite)
+    def __init__(self, isWhite, row, column):
+        super().__init__(isWhite, row, column)
     
     def baseMovement(self, board):
         baseMovement = []
