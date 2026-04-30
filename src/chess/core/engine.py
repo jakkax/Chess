@@ -5,18 +5,27 @@ class Engine:
         self.gameState = gameState
     
     def isLegalMove(self, move: Move):
-        piece = self.gameState.position.board[move.fromSquare[0]][move.fromSquare[1]]
-        capturedPiece = self.gameState.position.board[move.toSquare[0]][move.toSquare[1]]
+        piece = self.gameState.board.coords(move.fromSquare)
+        capturedPiece = self.gameState.board.coords(move.toSquare)
         
         # check base movement
-        if not move.toSquare in piece.baseMovement(self.gameState.position.board):
+        if not move.toSquare in piece.baseMovement(self.gameState.board):
             return False
         
         # checks
-        self.gameState.position.movePiece(move)
-        if self.gameState.position.findKing(self.gameState.isWhiteTurn) in self.gameState.position.attackMap(not self.gameState.isWhiteTurn):
-            self.gameState.position.unMove(move, capturedPiece)
+        self.gameState.board.movePiece(move)
+        if self.gameState.board.findKing(self.gameState.isWhiteTurn) in self.gameState.board.attackMap(not self.gameState.isWhiteTurn):
+            self.gameState.board.unMove(move, capturedPiece)
             return False
         else:
-            self.gameState.position.unMove(move, capturedPiece)
+            self.gameState.board.unMove(move, capturedPiece)
             return True
+    
+    def legalMoves(self, moves):
+        legalMoves = []
+
+        for move in moves:
+            if self.isLegalMove(move):
+                legalMoves.append(move)
+        
+        return legalMoves

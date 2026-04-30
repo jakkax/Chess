@@ -6,3 +6,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# TODO: use Move everywhere instead of lists (like in BoardView and Pieces)

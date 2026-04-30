@@ -27,16 +27,16 @@ class Pawn(Piece):
         doubleMoveRow = 6 if self.isWhite else 1
         baseMovement = []
 
-        if board[self.row + moveDirection][self.column] is None:
+        if board.coords(self.row + moveDirection, self.column) is None:
             baseMovement.append((self.row + moveDirection, self.column))
-            if self.row == doubleMoveRow and board[self.row + 2*moveDirection][self.column] is None:
+            if self.row == doubleMoveRow and board.coords(self.row + 2*moveDirection, self.column) is None:
                 baseMovement.append((self.row + 2*moveDirection, self.column))
         
         for capture in [(self.row + moveDirection, self.column - 1), (self.row + moveDirection, self.column + 1)]:
             if capture[1] not in range(8) or capture[0] not in range(8):
                 continue
 
-            piece = board[capture[0]][capture[1]]
+            piece = board.coords(capture[0], capture[1])
             if piece is not None and piece.isWhite != self.isWhite:
                 baseMovement.append(capture)
         
@@ -61,11 +61,11 @@ class Rook(Piece):
                 if row not in range(8) or column not in range(8):
                     break
                 
-                if board[row][column] is None:
+                if board.coords(row, column) is None:
                     baseMovement.append((row, column))
                     continue
                 
-                if board[row][column].isWhite != self.isWhite:
+                if board.coords(row, column).isWhite != self.isWhite:
                     baseMovement.append((row, column))
                 
                 break
@@ -90,7 +90,7 @@ class Knight(Piece):
             if row not in range(8) or column not in range(8):
                 continue
 
-            if board[row][column] is None or board[row][column].isWhite != self.isWhite:
+            if board.coords(row, column) is None or board.coords(row, column).isWhite != self.isWhite:
                 baseMovement.append(square)
         
         return baseMovement
@@ -114,11 +114,11 @@ class Bishop(Piece):
                 if row not in range(8) or column not in range(8):
                     break
                 
-                if board[row][column] is None:
+                if board.coords(row, column) is None:
                     baseMovement.append((row, column))
                     continue
                 
-                if board[row][column].isWhite != self.isWhite:
+                if board.coords(row, column).isWhite != self.isWhite:
                     baseMovement.append((row, column))
                 
                 break
@@ -144,11 +144,11 @@ class Queen(Piece):
                 if row not in range(8) or column not in range(8):
                     break
                 
-                if board[row][column] is None:
+                if board.coords(row, column) is None:
                     baseMovement.append((row, column))
                     continue
                 
-                if board[row][column].isWhite != self.isWhite:
+                if board.coords(row, column).isWhite != self.isWhite:
                     baseMovement.append((row, column))
                 
                 break
@@ -173,7 +173,7 @@ class King(Piece):
                 if row not in range(8) or column not in range(8) or (r == 0 and c == 0):
                     continue
                 
-                if board[row][column] is None or board[row][column].isWhite != self.isWhite:
+                if board.coords(row, column) is None or board.coords(row, column).isWhite != self.isWhite:
                     baseMovement.append((row, column))
         
         return baseMovement

@@ -42,7 +42,7 @@ class App:
         self.boardView.loadAssets() # loads pieces into variables
         
         self.boardView.renderBoard()
-        self.boardView.renderPieces(self.gameState.position.board)
+        self.boardView.renderPieces(self.gameState.board.grid)
 
     def run(self):
         self.setupCanvas()

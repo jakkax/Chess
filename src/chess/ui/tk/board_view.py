@@ -5,7 +5,7 @@ class BoardView:
     def __init__(self, canvas = None):
         self.canvas = canvas
 
-        self.boardLength = 800 # in pixels
+        self.boardLength = 700 # in pixels # 800
 
         self.originX = 0
         self.originY = 0
@@ -118,13 +118,6 @@ class BoardView:
         for move in moves:
             middleX = (move[1] + 0.5) * self.pixelsInSquare
             middleY = (move[0] + 0.5) * self.pixelsInSquare
-
-            # radius = self.pixelsInSquare / 9
-
-            # if (move[0] + move[1]) % 2 == 0:
-            #     colour = 'gray61' # light square
-            # else:
-            #     colour = 'gray62' # dark square
 
             self.canvas.create_image(middleX, middleY,
                                image = self.oval,

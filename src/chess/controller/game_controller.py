@@ -1,7 +1,5 @@
-from chess.core.game_state import GameState
 from chess.core.engine import Engine
 from chess.core.move import Move
-from chess.ui.tk.board_view import BoardView
 
 class GameController:
     def __init__(self, gameState, boardView):
@@ -13,14 +11,23 @@ class GameController:
         self.selectedSquare = ()
 
     def handleClick(self, clickedSquare):
-        clickedPiece = self.gameState.position.board[clickedSquare[0]][clickedSquare[1]]
-        # clickedPieceType = type(clickedPiece).__name__.lower()
+        clickedPiece = self.gameState.board.coords(clickedSquare)
+
+        baseMovement = []
+        legalMoves = []
+        if self.selectedPiece:
+            baseMovement = Move.tuplesToMoves((self.selectedPiece.row, self.selectedPiece.column), self.selectedPiece.baseMovement(self.gameState.board))
+            legalMoves = self.engine.legalMoves(baseMovement)
+        elif clickedPiece:
+            baseMovement = Move.tuplesToMoves((clickedPiece.row, clickedPiece.column), clickedPiece.baseMovement(self.gameState.board))
+            legalMoves = self.engine.legalMoves(baseMovement)
 
         if self.selectedPiece is None:
             if clickedPiece is not None and clickedPiece.isWhite == self.gameState.isWhiteTurn:
                 self.selectedPiece, self.selectedSquare = clickedPiece, clickedSquare
-                self.boardView.selectPiece(clickedSquare, self.gameState.position.board)
-                self.boardView.renderLegalMoves(self.selectedPiece.baseMovement(self.gameState.position.board)) # self.engine.legalMoves(clickedPieceType, self.gameState.board, self.selectedSquare)
+                self.boardView.selectPiece(clickedSquare, self.gameState.board.grid)
+                self.boardView.renderLegalMoves(legalMoves)
+                # self.boardView.renderLegalMoves(self.selectedPiece.baseMovement(self.gameState.board)) # self.engine.legalMoves(clickedPieceType, self.gameState.board self.selectedSquare)
             return
         
         # there is a selected piece
@@ -34,8 +41,9 @@ class GameController:
 
             if clickedPiece.isWhite == self.gameState.isWhiteTurn:
                 self.selectedPiece = clickedPiece
-                self.boardView.selectPiece(clickedSquare, self.gameState.position.board)
-                self.boardView.renderLegalMoves(self.selectedPiece.baseMovement(self.gameState.position.board)) # self.engine.legalMoves(clickedPieceType, self.gameState.board, self.selectedSquare)
+                self.boardView.selectPiece(clickedSquare, self.gameState.board.grid)
+                self.boardView.renderLegalMoves(legalMoves)
+                # self.boardView.renderLegalMoves(self.selectedPiece.baseMovement(self.gameState.board)) # self.engine.legalMoves(clickedPieceType, self.gameState.grid, self.selectedSquare)
                 return
         
         # the clicked square is empty / there's an enemy piece on it
@@ -50,15 +58,15 @@ class GameController:
 
             self.boardView.deselectPiece()
             self.boardView.deleteLegalMoves()
-            self.boardView.renderPieces(self.gameState.position.board)
+            self.boardView.renderPieces(self.gameState.board.grid)
         else:
             self.selectedPiece, self.selectedSquare = None, None
             self.boardView.deselectPiece()
             self.boardView.deleteLegalMoves()
 
     def handleDragClick(self, start, end):
-        startingSquare = self.gameState.position.board[start[0]][start[1]]
-        endingSquare = self.gameState.position.board[end[0]][end[1]]
+        startingSquare = self.gameState.board.coords(start)
+        endingSquare = self.gameState.board.coords(end)
 
         if startingSquare is None or startingSquare.isWhite != self.gameState.isWhiteTurn or (endingSquare is not None and startingSquare.isWhite == endingSquare.isWhite):
             self.handleClick(end)
