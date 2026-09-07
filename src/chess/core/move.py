@@ -11,3 +11,6 @@ class Move:
             moves.append(Move(fromSquare, (move[0], move[1])))
 
         return moves
+
+    def __str__(self):
+        return f'from {self.fromSquare} to {self.toSquare}'

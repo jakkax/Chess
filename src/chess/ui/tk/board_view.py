@@ -5,7 +5,7 @@ class BoardView:
     def __init__(self, canvas = None):
         self.canvas = canvas
 
-        self.boardLength = 700 # in pixels # 800
+        self.boardLength = 800 # in pixels # 800
 
         self.originX = 0
         self.originY = 0
@@ -116,8 +116,8 @@ class BoardView:
         self.deleteLegalMoves()
 
         for move in moves:
-            middleX = (move[1] + 0.5) * self.pixelsInSquare
-            middleY = (move[0] + 0.5) * self.pixelsInSquare
+            middleX = (move.toSquare[1] + 0.5) * self.pixelsInSquare
+            middleY = (move.toSquare[0] + 0.5) * self.pixelsInSquare
 
             self.canvas.create_image(middleX, middleY,
                                image = self.oval,

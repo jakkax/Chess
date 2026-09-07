@@ -7,7 +7,7 @@ class Engine:
     def isLegalMove(self, move: Move):
         piece = self.gameState.board.coords(move.fromSquare)
         capturedPiece = self.gameState.board.coords(move.toSquare)
-        
+
         # check base movement
         if not move.toSquare in piece.baseMovement(self.gameState.board):
             return False
@@ -23,7 +23,7 @@ class Engine:
     
     def legalMoves(self, moves):
         legalMoves = []
-
+        
         for move in moves:
             if self.isLegalMove(move):
                 legalMoves.append(move)

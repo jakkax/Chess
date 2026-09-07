@@ -41,12 +41,13 @@ class GameController:
 
             if clickedPiece.isWhite == self.gameState.isWhiteTurn:
                 self.selectedPiece = clickedPiece
+                self.selectedSquare = clickedSquare
                 self.boardView.selectPiece(clickedSquare, self.gameState.board.grid)
-                self.boardView.renderLegalMoves(legalMoves)
+                self.boardView.renderLegalMoves(self.engine.legalMoves(Move.tuplesToMoves((clickedPiece.row, clickedPiece.column), clickedPiece.baseMovement(self.gameState.board))))
                 # self.boardView.renderLegalMoves(self.selectedPiece.baseMovement(self.gameState.board)) # self.engine.legalMoves(clickedPieceType, self.gameState.grid, self.selectedSquare)
                 return
         
-        # the clicked square is empty / there's an enemy piece on it
+        # there is a selected piece and the clicked square is empty / there's an enemy piece on it
         
         fromSquare = self.selectedSquare
         move = Move(fromSquare, clickedSquare) # from selected piece's square to the clicked square

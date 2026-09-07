@@ -42,7 +42,7 @@ class Board:
 
         piece: Piece = self.coords(move.fromSquare)
         piece.row = move.fromSquare[0]
-        piece.row = move.fromSquare[1]
+        piece.column = move.fromSquare[1]
 
     def attackMap(self, colour):
         attackMap = set()
@@ -69,7 +69,7 @@ class Board:
     def __str__(self):
         board = ''
 
-        for row in self.board:
+        for row in self.grid:
             for piece in row:
                 if piece.__str__() == 'None':
                     board += '______ '
@@ -77,5 +77,7 @@ class Board:
                     board += piece.__str__() + ' '
             board = board[:-1]
             board += '\n'
+        
+        board += '\n'
 
         return board
